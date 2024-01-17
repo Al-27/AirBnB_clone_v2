@@ -13,14 +13,14 @@ class FileStorage:
             fltr_obj = {}
             for k in FileStorage.__objects.keys():
                 if str(cls).strip("<>'").split(".")[-1] in k:
-                    fltr_obj[k] = FileStorage.__objects[k].to_dict()
+                    fltr_obj[k] = FileStorage.__objects[k]
             
             return fltr_obj                    
                 
         return FileStorage.__objects
 
     def new(self, obj):
-        """Adds new object to storage dictionary""" 
+        """Adds new object to storage dictionary"""
         self.all().update({obj.to_dict()['__class__'] + '.' + obj.id: obj})
 
     def save(self):
@@ -29,9 +29,7 @@ class FileStorage:
             temp = {}
             temp.update(FileStorage.__objects)
             for key, val in temp.items():
-                if isinstance(val,str) :
-                    val = json.loads(val)
-                temp[key] = val
+                temp[key] = val.to_dict()
             json.dump(temp, f)
     
     def delete(self, obj=None):
@@ -58,10 +56,7 @@ class FileStorage:
         try:
             temp = {}
             with open(FileStorage.__file_path, 'r') as f:
-                line = f.read()
-                if not line:
-                    return
-                temp = json.loads(line)
+                temp = json.load(f)
                 for key, val in temp.items():
                         self.all()[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
