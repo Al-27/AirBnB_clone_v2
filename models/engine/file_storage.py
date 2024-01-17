@@ -29,6 +29,8 @@ class FileStorage:
             temp = {}
             temp.update(FileStorage.__objects)
             for key, val in temp.items():
+                if isinstance(val,str) :
+                    val = json.loads(val)
                 temp[key] = val
             json.dump(temp, f)
     
@@ -56,8 +58,11 @@ class FileStorage:
         try:
             temp = {}
             with open(FileStorage.__file_path, 'r') as f:
-                temp = json.load(f)
+                line = f.read()
+                if not line:
+                    return
+                temp = json.loads(line)
                 for key, val in temp.items():
-                        self.all()[key] = classes[val['__class__']](**val)
+                        self.all()[key] = classes[val['__class__']](**val).to_dict()
         except FileNotFoundError:
             pass
