@@ -30,7 +30,8 @@ class FileStorage:
             temp.update(FileStorage.__objects)
             for key, val in temp.items():
                 temp[key] = val.to_dict()
-            json.dump(temp, f)
+            objs = json.dumps(temp)
+            f.write(objs)
     
     def delete(self, obj=None):
         """Delete @obj from __objects"""
@@ -56,8 +57,10 @@ class FileStorage:
         try:
             temp = {}
             with open(FileStorage.__file_path, 'r') as f:
-                temp = json.load(f)
-                for key, val in temp.items():
-                        self.all()[key] = classes[val['__class__']](**val)
+                content = f.read()
+                if not( content is None or content == ""):
+                    temp = json.loads(content)
+                    for key, val in temp.items():
+                            self.all()[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
             pass

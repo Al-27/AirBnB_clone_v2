@@ -32,6 +32,15 @@ class BaseModel:
         cls = (str(type(self)).split('.')[-1]).split('\'')[0]
         return '[{}] ({}) {}'.format(cls, self.id, self.__dict__)
 
+    def set_attr(self, atrr, val):
+        """
+        """
+        try:
+            val = json.loads(val)
+        except BaseException:
+            val = val
+        self.__setattr__(atrr, val)
+        
     def save(self):
         """Updates updated_at with current time when instance is changed"""
         from models import storage
@@ -51,6 +60,6 @@ class BaseModel:
                           (str(type(self)).split('.')[-1]).split('\'')[0]})
         dictionary['created_at'] = self.created_at.isoformat()
         dictionary['updated_at'] = self.updated_at.isoformat()
-        if "_sa_instance_state" in dictionary.keys():
+        if "_sa_instance_state" in dictionary:
             dictionary.pop("_sa_instance_state")
         return dictionary
