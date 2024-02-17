@@ -25,4 +25,7 @@ def python_route(text="is_cool"):
     return f'Python {escape(text)}'
 
     
-app.run("0.0.0.0",5000)
+
+    
+if __name__ == "__main__":
+    app.run("0.0.0.0",5000)
