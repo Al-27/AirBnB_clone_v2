@@ -2,9 +2,9 @@
 """
 docs
 """
+import MySQLdb
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import Session,scoped_session, sessionmaker
-import MySQLdb
 from os import environ
 from models.base_model import Base, BaseModel
 from models.user import User
@@ -25,7 +25,7 @@ class DBStorage:
     def __init__(self):
         """
         """
-        self.__engine = create_engine(f"mysql+mysqldb://{environ.get('HBNB_MYSQL_USER')}:{environ.get('HBNB_MYSQL_PWD')}@localhost/{environ.get('HBNB_MYSQL_DB')}",pool_pre_ping=True)
+        self.__engine = create_engine(f"mysql://{environ.get('HBNB_MYSQL_USER')}:{environ.get('HBNB_MYSQL_PWD')}@localhost/{environ.get('HBNB_MYSQL_DB')}",pool_pre_ping=True)
                
         if environ.get('HBNB_ENV') == "test":
             Base.metadata.drop_all(self.__engine)
@@ -55,14 +55,17 @@ class DBStorage:
         if cls is not None:            
             for _cls in self.__session.query(cls).all():
                 key = "{}.{}".format(_cls.__class__.__name__ ,_cls.id )
-                dict_obj[key] = _cls.to_dict()
+                dict_obj[key] = _cls
         else:
             for Class in CLASSES:
                 for _cls in self.__session.query(Class).all():
                     key = "{}.{}".format(_cls.__class__.__name__ ,_cls.id )
-                    dict_obj[key] = _cls.to_dict()
+                    dict_obj[key] = _cls
         
         return dict_obj
+    
+    def close(self):
+        self.__session.close()
     
     def reload(self):
         """

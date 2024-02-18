@@ -38,6 +38,9 @@ class FileStorage:
         if obj != None:
             FileStorage.__objects.pop(obj.to_dict()['__class__'] + '.' + obj.id)
             self.save()
+            
+    def close(self):
+        self.reload()
 
     def reload(self):
         """Loads storage dictionary from file"""
@@ -61,6 +64,6 @@ class FileStorage:
                 if not( content is None or content == ""):
                     temp = json.loads(content)
                     for key, val in temp.items():
-                            self.all()[key] = classes[val['__class__']](**val)
+                        self.all()[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
             pass
