@@ -2,3 +2,5 @@ file.json
 __pycache__
 Venv
 .gitignore
+*.pyc
+.gitignore
